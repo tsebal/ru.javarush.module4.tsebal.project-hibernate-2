@@ -1,0 +1,52 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <property name = "hibernate.dialect">
+            org.hibernate.dialect.MySQLDialect
+        </property>
+
+        <property name = "hibernate.connection.driver_class">
+            com.p6spy.engine.spy.P6SpyDriver
+        </property>
+
+        <property name = "hibernate.connection.url">
+            jdbc:p6spy:mysql://localhost:3306/movie
+        </property>
+
+
+        <property name = "hibernate.connection.username">
+            root
+        </property>
+
+        <property name = "hibernate.connection.password">
+            jkliop33
+        </property>
+
+        <property name="current_session_context_class">
+            thread
+        </property>
+
+        <property name="hbm2ddl.auto">
+            validate
+        </property>
+
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Actor"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Address"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Category"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.City"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Country"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Customer"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Film"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.FilmText"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Inventory"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Payment"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Language"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Rental"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Staff"/>
+        <mapping class="ru.javarush.module4.projecthibernate2.entity.Store"/>
+
+    </session-factory>
+</hibernate-configuration>
