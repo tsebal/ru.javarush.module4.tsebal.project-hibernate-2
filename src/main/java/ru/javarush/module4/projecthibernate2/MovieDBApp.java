@@ -17,12 +17,18 @@ import ru.javarush.module4.projecthibernate2.dao.PaymentDAO;
 import ru.javarush.module4.projecthibernate2.dao.RentalDAO;
 import ru.javarush.module4.projecthibernate2.dao.StaffDAO;
 import ru.javarush.module4.projecthibernate2.dao.StoreDAO;
+import ru.javarush.module4.projecthibernate2.entity.Actor;
 import ru.javarush.module4.projecthibernate2.entity.Address;
+import ru.javarush.module4.projecthibernate2.entity.Category;
 import ru.javarush.module4.projecthibernate2.entity.City;
 import ru.javarush.module4.projecthibernate2.entity.Customer;
+import ru.javarush.module4.projecthibernate2.entity.Feature;
 import ru.javarush.module4.projecthibernate2.entity.Film;
+import ru.javarush.module4.projecthibernate2.entity.FilmText;
 import ru.javarush.module4.projecthibernate2.entity.Inventory;
+import ru.javarush.module4.projecthibernate2.entity.Language;
 import ru.javarush.module4.projecthibernate2.entity.Payment;
+import ru.javarush.module4.projecthibernate2.entity.Rating;
 import ru.javarush.module4.projecthibernate2.entity.Rental;
 import ru.javarush.module4.projecthibernate2.entity.Staff;
 import ru.javarush.module4.projecthibernate2.entity.Store;
@@ -30,6 +36,10 @@ import ru.javarush.module4.projecthibernate2.utils.MovieDBSessionFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MovieDBApp {
     private final SessionFactory sessionFactory;
@@ -71,8 +81,47 @@ public class MovieDBApp {
     public static void main(String[] args) {
         MovieDBApp movieDBApp = new MovieDBApp();
         Customer customer = movieDBApp.createCustomer();
-        //movieDBApp.customerReturnInventoryToStore();
+        movieDBApp.customerReturnInventoryToStore();
         movieDBApp.customerRentInventory(customer);
+        movieDBApp.newFilmReleased();
+    }
+
+    private void newFilmReleased() {
+        try (Session session = sessionFactory.getCurrentSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Language language = languageDAO.getItems(0, 10).stream()
+                    .unordered()
+                    .findAny()
+                    .get();
+            List<Category> categories = categoryDAO.getItems(0, 4);
+            List<Actor> actors = actorDAO.getItems(0, 15);
+
+            Film film = new Film();
+            film.setTitle("Toxic Avenger");
+            film.setDescription("A Toxic Avenger finds his granny under very strange circumstances.");
+            film.setYear(Year.now());
+            film.setActors(new HashSet<>(actors));
+            film.setLength((short) 94);
+            film.setLanguage(language);
+            film.setOriginalLanguage(language);
+            film.setCategories(new HashSet<>(categories));
+            film.setRating(Rating.PG13);
+            film.setRentalRate(BigDecimal.ZERO);
+            film.setRentalDuration((byte) 30);
+            film.setReplacementCost(BigDecimal.TEN);
+            film.setSpecialFeatures(Set.of(Feature.DELETED_SCENES, Feature.COMMENTARIES));
+            filmDAO.save(film);
+
+            FilmText filmText = new FilmText();
+            filmText.setId(film.getId());
+            filmText.setFilm(film);
+            filmText.setTitle("Toxic Avenger");
+            filmText.setDescription("A Toxic Avenger finds his granny...");
+            filmTextDAO.save(filmText);
+
+            transaction.commit();
+        }
     }
 
     private void customerRentInventory(Customer customer) {
